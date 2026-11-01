@@ -9,7 +9,7 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   const motionObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.target.classList.toggle('motion-active', entry.isIntersecting));
   });
-  document.querySelectorAll('.hero, .portrait-section').forEach(el => motionObserver.observe(el));
+  document.querySelectorAll('.hero, .portrait-section, .timeline-item, .album-icon').forEach(el => motionObserver.observe(el));
 }
 // A date-only countdown: the hosts have not supplied an event time yet.
 function daysUntilEvent(now = new Date()) {

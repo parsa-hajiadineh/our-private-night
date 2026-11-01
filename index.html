@@ -10,26 +10,45 @@
   <link rel="preload" href="assets/nastaliq-subset.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="preload" href="assets/vazirmatn.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="experience.css">
   <script src="app.js" defer></script>
+  <script src="veil.js" defer></script>
+  <script src="experience.js" defer></script>
 </head>
 <body>
+<svg class="icon-library" aria-hidden="true"><defs>
+<symbol id="i-heart" viewBox="0 0 32 32"><path d="M16 27S3 19 3 10a7 7 0 0 1 13-3 7 7 0 0 1 13 3c0 9-13 17-13 17Z"/></symbol>
+<symbol id="i-camera" viewBox="0 0 32 32"><path d="M4 9h6l2-4h8l2 4h6v18H4Z"/><circle cx="16" cy="18" r="6"/><path d="M24 13h1"/></symbol>
+<symbol id="i-music" viewBox="0 0 32 32"><path d="M12 24V7l15-3v17M12 12l15-3"/><ellipse cx="8" cy="25" rx="4" ry="3"/><ellipse cx="23" cy="22" rx="4" ry="3"/></symbol>
+<symbol id="i-spark" viewBox="0 0 32 32"><path d="m16 3 3 10 10 3-10 3-3 10-3-10-10-3 10-3Z"/></symbol>
+<symbol id="i-glass" viewBox="0 0 32 32"><path d="M7 3h18l-2 11a7 7 0 0 1-14 0L7 3Zm9 18v8m-6 0h12M8 9h16"/></symbol>
+<symbol id="i-moon" viewBox="0 0 32 32"><path d="M23 4a12 12 0 1 0 5 21A13 13 0 0 1 23 4Z"/></symbol>
+<symbol id="i-envelope" viewBox="0 0 32 32"><rect x="3" y="7" width="26" height="19" rx="2"/><path d="m4 9 12 9L28 9M4 25l8-9m16 9-8-9"/></symbol>
+<symbol id="i-upload" viewBox="0 0 32 32"><path d="M16 22V4m-6 6 6-6 6 6M5 21v7h22v-7"/></symbol>
+<symbol id="i-clock" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12"/><path d="M16 8v8l5 3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 32 32"><path d="M26 13c0 8-10 16-10 16S6 21 6 13a10 10 0 1 1 20 0Z"/><circle cx="16" cy="13" r="3.5"/></symbol>
+</defs></svg>
+<audio id="wedding-music" preload="none" loop src="assets/wedding-piano.mp3"></audio>
+<button class="music-toggle" id="music-toggle" type="button" aria-label="پخش موسیقی" aria-pressed="false"><span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="music-label">موسیقی</span></button>
+<div class="toast" id="toast" role="status" hidden></div>
 <a class="skip-link" href="#invitation">رفتن به متن دعوت</a>
 <div class="desktop-note" aria-hidden="true"><span>PARSA & SABA</span><i>an evening to remember</i><span>THE PRIVATE WEDDING EDITION</span></div>
 <main class="invitation-book">
   <section class="hero" id="top" aria-labelledby="couple-names">
     <picture class="garden-art"><source srcset="assets/garden-640.webp 640w, assets/garden-1024.webp 1024w" sizes="(max-width: 600px) 100vw, 600px"><img src="assets/garden-1024.webp" width="1024" height="1536" fetchpriority="high" alt="تصویرسازی باغ پاییزی، گل‌های صورتی و آلویی و میز دونفره با شمع"></picture>
+    <div class="veil-layer" id="veil-layer" hidden><div class="veil-sheet" id="veil-sheet"><img src="assets/veil.webp" width="640" height="960" alt="" draggable="false"><span class="veil-weave"></span></div><div class="veil-prompt"><span class="veil-monogram" dir="ltr">P & S</span><p>یک لمس تا شبِ ما</p><span class="veil-gesture" aria-hidden="true">⌁</span><small>تور را با انگشت کنار بزنید</small><button id="veil-skip" type="button">گشودن دعوت</button></div></div>
     <div class="hero-type">
       <p class="eyebrow">THE PRIVATE WEDDING NIGHT</p>
       <p class="hero-prelude">شبی برای نزدیک‌ترین‌ها</p>
       <h1 id="couple-names">پارسا <span>و</span> صبا</h1>
       <p class="english-names" dir="ltr">Parsa <i>&</i> Saba</p>
       <div class="hero-date"><span>پنجشنبه</span><span class="date-divider"></span><time datetime="2026-11-19">۲۸ آبان ۱۴۰۵</time></div>
-      <a class="open-invitation" href="#invitation">این دعوت برای شماست <span aria-hidden="true">↓</span></a>
+      <a class="open-invitation" href="#invitation">این دعوت برای شماست <span class="scroll-mouse" aria-hidden="true"><i></i><b></b></span></a>
     </div>
     <span class="candle-glow glow-one" aria-hidden="true"></span><span class="candle-glow glow-two" aria-hidden="true"></span>
     <span class="light-speck speck-one" aria-hidden="true"></span><span class="light-speck speck-two" aria-hidden="true"></span><span class="light-speck speck-three" aria-hidden="true"></span>
   </section>
-  <nav class="section-nav" aria-label="بخش‌های دعوت"><a href="#invitation">دعوت شما</a><span aria-hidden="true">✧</span><a href="#our-date">تاریخِ دیدار</a><span aria-hidden="true">✧</span><a href="#details">قرارمان</a></nav>
+  <nav class="section-nav" aria-label="بخش‌های دعوت"><a href="#invitation">دعوت</a><a href="#timeline">برنامه شب</a><a href="#details">مسیریابی</a><a href="#rsvp">اعلام حضور</a><a href="#album">آلبوم</a></nav>
   <section class="letter paper-section" id="invitation" aria-labelledby="letter-title">
     <div class="floral-top reveal"><img src="assets/floral-ribbon.webp" width="1000" height="334" loading="lazy" alt=""></div>
     <p class="eyebrow reveal">A NOTE, JUST FOR YOU</p>
@@ -41,6 +60,7 @@
   <section class="portrait-section" aria-label="یادگار پارسا و صبا">
     <div class="portrait-card reveal">
       <div class="portrait-arch" id="portrait-frame">
+        <img class="couple-photo" id="couple-photo" alt="پارسا و صبا" hidden>
         <span class="portrait-tiny">OUR LITTLE FOREVER</span>
         <div class="portrait-monogram" dir="ltr" aria-label="نشان پارسا و صبا">P<span>&</span>S</div>
         <p class="portrait-vow">از اینجا، با هم.</p>
@@ -67,17 +87,26 @@
       <p class="calendar-foot">پنجشنبه، بیست‌وهشتم آبان <span aria-hidden="true">♡</span></p>
     </div>
     <div class="countdown reveal" id="countdown" hidden><span class="days-number" id="days-left"></span><p id="countdown-caption">روز تا شبی که کنار همیم</p></div>
-    <a class="button calendar-button reveal" href="assets/parsa-saba.ics" download="Parsa-Saba.ics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v5m8-5v5M4 11h16m-8 3v5m-2.5-2.5h5"/></svg>ذخیره تاریخ در تقویم</a><p class="calendar-note reveal">ساعت دقیق را به‌زودی با شما هماهنگ می‌کنیم.</p>
+    <a class="button calendar-button reveal" href="assets/parsa-saba.ics" download="Parsa-Saba.ics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v5m8-5v5M4 11h16m-8 3v5m-2.5-2.5h5"/></svg>ذخیره تاریخ در تقویم</a><p class="calendar-note reveal">ورود مهمان‌ها: ۱۷ تا ۱۷:۴۵ · رسیدن ما: ۱۸</p>
   </section>
+<section class="timeline-section paper-section" id="timeline"><p class="eyebrow reveal">THE RHYTHM OF OUR NIGHT</p><h2 class="calligraphy reveal">از اولین سلام تا آخرین ترانه</h2><p class="section-intro reveal">برای این‌که هیچ لحظه‌ای را از دست ندهیم.</p><ol class="night-timeline"><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-clock"></use></svg></span><div class="timeline-content"><time>۱۷ — ۱۷:۴۵</time><h3>رسیدن شما</h3><p>تا ساعت ۱۷:۴۵ کنار هم جمع می‌شویم.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-heart"></use></svg></span><div class="timeline-content"><time>۱۸:۰۰</time><h3>رسیدنِ ما</h3><p>شروع شب، با دیدن شما.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-glass"></use></svg></span><div class="timeline-content"><time>۱۸:۱۵</time><h3>پذیرایی و فینگر‌فود</h3><p>اولین گپ‌ها، اولین خوش‌آمدها.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-music"></use></svg></span><div class="timeline-content"><time>۱۸:۳۰</time><h3>رقص و پایکوبی</h3><p>وقتِ دل‌دادن به موسیقی.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-camera"></use></svg></span><div class="timeline-content"><time>۱۹:۳۰</time><h3>عکس‌های یادگاری</h3><p>قاب‌های دونفره و دسته‌جمعی.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-glass"></use></svg></span><div class="timeline-content"><time>۲۰:۳۰</time><h3>پذیرایی</h3><p>کمی مکث، کنار هم.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-music"></use></svg></span><div class="timeline-content"><time>۲۱:۰۰</time><h3>دوباره موسیقی و رقص</h3><p>ادامه شبی که برایش جمع شده‌ایم.</p></div></li><li class="timeline-item reveal"><span class="timeline-dot"><svg class="line-icon" aria-hidden="true"><use href="#i-moon"></use></svg></span><div class="timeline-content"><time>۰۰:۰۰</time><h3>پایان برنامه اصلی</h3><p>حوالی نیمه‌شب، با یک دنیا خاطره.</p></div></li></ol><p class="arrival-reminder reveal">لطفاً تا ۱۷:۴۵ برسید؛ دوست داریم لحظه ورودمان، همه‌تان آنجا باشید.</p></section>
+<section class="dress-section paper-section" id="dress-code"><div class="dress-paper reveal"><span class="dress-ornament" aria-hidden="true">✧</span><p class="eyebrow">A LITTLE COLOUR HARMONY</p><h2 class="calligraphy">رنگ‌هایی برای این شب</h2><p>اگر دوست داشتید، یکی از این رنگ‌ها را همراهتان بیاورید.<br>این فقط یک پیشنهاد است؛ راحتی و سلیقه شما مهم‌تر است.</p><ul class="dress-palette"><li><span class="fabric-swatch brown"></span>قهوه‌ای</li><li><span class="fabric-swatch champagne"></span>شامپاینی</li><li><span class="fabric-swatch black"></span>مشکی</li><li><span class="fabric-swatch cream"></span>کرمی</li><li><span class="fabric-swatch silver"></span>نقره‌ای</li></ul></div></section>
   <section class="details-section" id="details" aria-labelledby="details-title">
     <div class="details-border">
       <p class="eyebrow reveal">AN EVENING, IN GOOD COMPANY</p>
       <h2 class="calligraphy reveal" id="details-title">قرارمان، کنار هم.</h2>
-      <div class="event-detail reveal"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="16" cy="17" r="11"/><path d="M16 9v8l5 3M12 3h8"/></svg><div><h3>پنجشنبه، ۲۸ آبان</h3><p>ساعت شروع مهمانی به‌زودی اعلام می‌شود.</p></div></div>
-      <div class="event-detail reveal"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M26 13c0 8-10 16-10 16S6 21 6 13a10 10 0 1 1 20 0Z"/><circle cx="16" cy="13" r="3.5"/></svg><div><h3>نشانی دیدار</h3><p>آدرس و مسیر رسیدن، به‌زودی همین‌جا.</p></div></div>
-      <div class="evening-note reveal"><span aria-hidden="true">✧</span><p>آن شب عجله‌ای برای رفتن نداشته باشید؛<br>دلمان می‌خواهد بیشتر کنار هم بمانیم.</p></div>
+      <div class="event-detail reveal"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="16" cy="17" r="11"/><path d="M16 9v8l5 3M12 3h8"/></svg><div><h3>پنجشنبه، ۲۸ آبان</h3><p>ورود مهمان‌ها از ساعت ۱۷ تا حداکثر ۱۷:۴۵</p></div></div>
+      <div class="event-detail reveal"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M26 13c0 8-10 16-10 16S6 21 6 13a10 10 0 1 1 20 0Z"/><circle cx="16" cy="13" r="3.5"/></svg><div><h3>نشانی دیدار</h3><p>سهیلیه، زکی‌آباد، خیابان ارغوان ۱</p></div></div>
+      <a class="map-button button reveal" id="map-link" href="https://maps.app.goo.gl/2A1qMb5PX9AnUe439?g_st=ic" target="_blank" rel="noopener noreferrer"><svg class="line-icon" aria-hidden="true"><use href="#i-pin"></use></svg>مسیریابی تا مهمانی</a><button type="button" class="copy-address reveal" id="copy-address">کپی نشانی</button><div class="evening-note reveal"><span aria-hidden="true">✧</span><p>آن شب عجله‌ای برای رفتن نداشته باشید؛<br>دلمان می‌خواهد بیشتر کنار هم بمانیم.</p></div>
     </div>
   </section>
+
+<section class="rsvp-section paper-section" id="rsvp"><p class="eyebrow reveal">A PLACE, SAVED FOR YOU</p><h2 class="calligraphy reveal">کنارمان هستید؟</h2><p class="section-intro reveal">تا پایان <strong id="deadline-label">جمعه ۱۵ آبان</strong> خبرمان کنید<br>تا با خیال راحت برای حضورتان برنامه بریزیم.</p>
+<form id="rsvp-form" class="guest-form reveal"><label>نام و نام خانوادگی<input name="name" required maxlength="80" autocomplete="name" placeholder="نام شما"></label><fieldset><legend>آن شب کنار ما هستید؟</legend><div class="attendance-options"><label><input type="radio" name="attending" value="yes" required><span>با خوشحالی می‌آیم ♡</span></label><label><input type="radio" name="attending" value="no"><span>این بار نمی‌رسم</span></label></div></fieldset><label id="guest-count-label">تعداد نفرات، با خودتان<select name="guests"><option value="1">۱ نفر</option><option value="2">۲ نفر</option><option value="3">۳ نفر</option><option value="4">۴ نفر</option><option value="5">۵ نفر</option><option value="6">۶ نفر</option><option value="7">۷ نفر</option><option value="8">۸ نفر</option><option value="9">۹ نفر</option><option value="10">۱۰ نفر</option></select></label><label>چیزی هست که بهتر است بدانیم؟ <small>اختیاری</small><textarea name="note" rows="2" maxlength="500" placeholder="مثلاً محدودیت غذایی یا توضیح همراه‌ها"></textarea></label><button class="button filled" type="submit"><svg class="line-icon" aria-hidden="true"><use href="#i-heart"></use></svg>ثبت پاسخ من</button><p class="form-status" role="status"></p><p class="privacy-note">پاسخ شما فقط برای پارسا و صبا نمایش داده می‌شود.</p></form></section>
+<section class="guestbook-section paper-section" id="guestbook"><img class="section-floral" src="assets/floral-ribbon.webp" width="1000" height="334" loading="lazy" alt=""><p class="eyebrow reveal">WORDS WE WILL KEEP</p><h2 class="calligraphy reveal">چند خط که می‌ماند</h2><p class="section-intro reveal">یک آرزو، یک خاطره یا چیزی که دوست دارید<br>سال‌ها بعد، دوباره از شما بخوانیم.</p><div id="guest-notes" class="guest-notes" aria-live="polite"></div><details class="write-note reveal"><summary><svg class="line-icon" aria-hidden="true"><use href="#i-envelope"></use></svg>برایمان یادگاری بنویسید <span>＋</span></summary><form id="note-form" class="guest-form"><label>نام شما<input name="name" required maxlength="80" autocomplete="name"></label><label>یادگاری شما<textarea name="message" rows="4" required maxlength="1200" placeholder="هر چه از دل برآید…"></textarea></label><p class="privacy-note">یادگاری شما بعد از تأیید ما در این دفتر دیده می‌شود.</p><button class="button filled" type="submit">فرستادن یادگاری</button><p class="form-status" role="status"></p></form></details></section>
+<section class="album-section" id="album"><p class="eyebrow reveal">THROUGH YOUR EYES</p><div class="album-icon reveal"><svg class="line-icon" aria-hidden="true"><use href="#i-camera"></use></svg></div><h2 class="calligraphy reveal">این شب، از نگاه شما</h2><p class="section-intro reveal">ما نمی‌توانیم همه لحظه‌ها را ببینیم.<br>قاب‌هایی که شما می‌گیرید، بخش دیگری از خاطره ماست.</p><div class="gallery-grid" id="guest-gallery" aria-live="polite"></div><p id="gallery-empty" class="empty-album">اولین قاب این آلبوم، شاید از نگاه شما باشد.</p>
+<form id="upload-form" class="guest-form"><label>نام شما<input name="name" required maxlength="80" autocomplete="name"></label><label class="upload-zone"><svg class="line-icon" aria-hidden="true"><use href="#i-upload"></use></svg><strong>عکس‌ها و فیلم‌هایتان را انتخاب کنید</strong><span>چند فایل با هم · حداکثر ۸۰ مگابایت برای هر فایل</span><input type="file" id="media-files" name="files" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple required></label><ul class="selected-files" id="selected-files"></ul><label>توضیح کوتاه <small>اختیاری</small><input name="caption" maxlength="500" placeholder="مثلاً: اولین رقصِ شب"></label><label class="consent-label"><input type="checkbox" name="publicConsent"><span>موافقم این فایل‌ها بعد از تأیید پارسا و صبا در آلبوم مهمانی دیده شوند.</span></label><p class="privacy-note">اگر این گزینه را انتخاب نکنید، فایل‌ها فقط برای خودمان می‌مانند.</p><progress id="upload-progress" max="100" value="0" hidden aria-label="پیشرفت ارسال"></progress><button class="button filled" type="submit"><svg class="line-icon" aria-hidden="true"><use href="#i-camera"></use></svg>ارسال به آلبوم ما</button><p class="form-status" role="status"></p></form>
+<div class="album-qr" id="album-qr" hidden><img id="guest-qr" width="150" height="150" alt="کد QR ارسال عکس و فیلم"><p>روی میزها هم همین کد منتظر شماست.<br>اسکن کنید، انتخاب کنید، برایمان بفرستید.</p></div></section>
   <footer>
     <img class="footer-floral" src="assets/floral-ribbon.webp" width="1000" height="334" loading="lazy" alt="">
     <p class="eyebrow">WITH LOVE, ALWAYS</p><p class="footer-names">پارسا و صبا</p><p class="footer-message">چه خوب که شما هم بخشی از این شبید.</p>

@@ -4,11 +4,12 @@ PRODID:-//Parsa and Saba//Private Wedding Night//FA
 CALSCALE:GREGORIAN
 BEGIN:VEVENT
 UID:parsa-saba-20261119@our-private-night.local
-DTSTAMP:20261101T203000Z
-DTSTART;VALUE=DATE:20261119
-DTEND;VALUE=DATE:20261120
+DTSTAMP:20261102T000000Z
+DTSTART:20261119T133000Z
+DTEND:20261119T203000Z
 SUMMARY:Parsa & Saba - Private Wedding Night
-DESCRIPTION:Save the date. Event time and location will be announced.
-TRANSP:TRANSPARENT
+LOCATION:Soheiliyeh\, Zakiabad\, Arghavan 1
+DESCRIPTION:Guest arrival 17:00-17:45 Tehran time. Couple arrives at 18:00.
+URL:https://maps.app.goo.gl/2A1qMb5PX9AnUe439
 END:VEVENT
 END:VCALENDAR

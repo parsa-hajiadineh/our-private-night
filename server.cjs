@@ -211,7 +211,7 @@ const server = http.createServer(async (req, res) => {
       throw error(404,'یافت نشد.');
     }
     if(!['GET','HEAD'].includes(req.method))throw error(405,'روش درخواست معتبر نیست.');
-    const publicFiles=new Set(['/index.html','/style.css','/experience.css','/app.js','/experience.js','/veil.js','/admin.html','/admin.js','/admin.css','/qr.html','/qr.js']);
+    const publicFiles=new Set(['/index.html','/style.css','/experience.css','/app.js','/experience.js','/veil.js','/admin.html','/admin.js','/admin.css','/qr.html','/qr.js','/qr.css']);
     const normalized=route==='/'?'/index.html':route==='/admin'?'/admin.html':route;
     if(!publicFiles.has(normalized)&&!/^\/assets\/[a-zA-Z0-9_.-]+\.(webp|jpg|png|svg|mp3|woff2|ttf|ics)$/i.test(normalized))throw error(404,'یافت نشد.');
     const file=path.join(ROOT,normalized);return await serveFile(req,res,file,types[path.extname(file)]||'application/octet-stream');

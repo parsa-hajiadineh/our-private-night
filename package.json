@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node server.cjs"
+    "dev": "node server.cjs",
+    "test": "node --test test/*.test.cjs"
   },
   "dependencies": {
     "busboy": "1.6.0",
     "qrcode": "1.5.4"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
