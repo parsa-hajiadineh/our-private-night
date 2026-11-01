@@ -11,5 +11,11 @@
 .section-nav{position:sticky;top:0;z-index:6;gap:0;padding:7px 8px;box-shadow:0 3px 12px #49362b06;background:#eee2ccf5;backdrop-filter:blur(6px)}
 .section-nav a{flex:1;display:grid;place-items:center;min-height:42px;font-size:10px;text-align:center}
 html{scroll-padding-top:72px}
+/* Keep the opening artwork within one complete screen, including tall phones. */
+.hero{min-height:100vh;min-height:100svh;aspect-ratio:auto}
+@media(min-width:700px){.hero{min-height:calc(100svh - 38px)}}
 .cloth-mesh{position:absolute;inset:0;opacity:.85;pointer-events:none}.cloth-mesh i{display:block;transition:transform .8s cubic-bezier(.2,.8,.2,1);backface-visibility:hidden}.dragging .cloth-mesh i{transition:none}.veil-sheet>img,.veil-weave{opacity:0!important}.veil-sheet{background:none;backdrop-filter:none}
 @media(prefers-reduced-motion:no-preference){.fabric-swatch{animation:fabric-sway 7s ease-in-out infinite alternate;transform-origin:50% 0}.dress-palette li:nth-child(even) .fabric-swatch{animation-delay:-3s}.dress-ornament{display:inline-block;animation:star-turn 12s linear infinite}.timeline-item.motion-active .line-icon{animation:icon-breathe 3s ease-in-out infinite}.section-floral{animation:flower-breathe 8s ease-in-out infinite alternate}@keyframes fabric-sway{to{rotate:3deg;translate:0 -3px}}@keyframes star-turn{to{rotate:180deg}}@keyframes flower-breathe{to{transform:scale(1.025) rotate(1deg)}}}
+/* Keep Persian shaping tables intact for the veil's connected lettering. */
+@font-face{font-family:VeilNastaliq;src:url('assets/nastaliq-veil.ttf') format('truetype');font-weight:400;font-display:swap}
+#veil-layer .veil-prompt p{font-family:VeilNastaliq,serif;font-weight:400;font-synthesis:none;letter-spacing:0;line-height:2.6;padding-block:6px}
