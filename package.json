@@ -2,5 +2,11 @@
   "name": "our-private-night",
   "version": "0.1.0",
   "private": true,
-  "scripts": { "dev": "node server.cjs" }
+  "scripts": {
+    "dev": "node server.cjs"
+  },
+  "dependencies": {
+    "busboy": "1.6.0",
+    "qrcode": "1.5.4"
+  }
 }
