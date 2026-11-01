@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Parsa and Saba//Private Wedding Night//FA
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:parsa-saba-20261119@our-private-night.local
+DTSTAMP:20261101T203000Z
+DTSTART;VALUE=DATE:20261119
+DTEND;VALUE=DATE:20261120
+SUMMARY:Parsa & Saba - Private Wedding Night
+DESCRIPTION:Save the date. Event time and location will be announced.
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR
