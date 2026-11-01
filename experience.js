@@ -1,11 +1,11 @@
-﻿(() => {
+(() => {
   'use strict';
   const $ = id => document.getElementById(id);
   const fa = new Intl.NumberFormat('fa-IR');
   const API_HEADERS = {'Content-Type':'application/json','X-Requested-With':'wedding-invitation'};
   let config = null, selectedFiles = [], sending = false;
   let guestKey;
-  try {guestKey=localStorage.getItem('wedding-guest-key');if(!guestKey){guestKey=crypto.randomUUID().replace(/-/g,'');localStorage.setItem('wedding-guest-key',guestKey);}}catch{guestKey=crypto.randomUUID().replace(/-/g,'');}
+  try {guestKey=localStorage.getItem('wedding-guest-key');if(!guestKey){guestKey=Array.from(crypto.getRandomValues(new Uint8Array(16)), n=>n.toString(16).padStart(2,'0')).join('').replace(/-/g,'');localStorage.setItem('wedding-guest-key',guestKey);}}catch{guestKey=Array.from(crypto.getRandomValues(new Uint8Array(16)), n=>n.toString(16).padStart(2,'0')).join('').replace(/-/g,'');}
   async function api(url, body) {
     const response = await fetch(url,body?{method:'POST',headers:API_HEADERS,body:JSON.stringify(body)}:{});
     const data = await response.json();if(!response.ok)throw Error(data.error||'دوباره تلاش کنید.');return data;
