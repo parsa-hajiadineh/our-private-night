@@ -15,7 +15,7 @@
   `;document.head.append(css);
   const canvas=document.createElement('canvas');canvas.className='veil-cloth-canvas';canvas.setAttribute('aria-hidden','true');sheet.append(canvas);
   const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
-  const nx=24,ny=32,points=[],links=[];let w=0,h=0,raf=0,last=0,clock=0,grab=null,opening=0,opened=false,dragDistance=0;
+  const nx=48,ny=64,points=[],links=[];let w=0,h=0,raf=0,last=0,clock=0,grab=null,opening=0,opened=false,dragDistance=0;
   function setup(){
     w=layer.clientWidth;h=layer.clientHeight;if(!w||!h)return;
     const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -55,7 +55,7 @@
       // Threads run through shared edges, staying attached while the mesh folds.
       const a=projected[i],b=projected[i+1],c=projected[i+nx+1],d=projected[i+nx+2];
       ctx.strokeStyle='rgba(255,255,255,.24)';ctx.lineWidth=.45;ctx.beginPath();
-      for(let t=0;t<1;t+=.2){ctx.moveTo(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);ctx.lineTo(c.x+(d.x-c.x)*t,c.y+(d.y-c.y)*t);ctx.moveTo(a.x+(c.x-a.x)*t,a.y+(c.y-a.y)*t);ctx.lineTo(b.x+(d.x-b.x)*t,b.y+(d.y-b.y)*t);}ctx.stroke();
+      for(let t=0;t<1;t+=.5){ctx.moveTo(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);ctx.lineTo(c.x+(d.x-c.x)*t,c.y+(d.y-c.y)*t);ctx.moveTo(a.x+(c.x-a.x)*t,a.y+(c.y-a.y)*t);ctx.lineTo(b.x+(d.x-b.x)*t,b.y+(d.y-b.y)*t);}ctx.stroke();
     }
     // A continuous fine rolled hem along the free lower edge.
     ctx.beginPath();for(let x=0;x<=nx;x++){const p=projected[ny*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.2;ctx.stroke();
