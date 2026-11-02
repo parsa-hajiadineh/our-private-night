@@ -21,7 +21,11 @@
     const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
     points.length=links.length=0;
     for(let y=0;y<=ny;y++)for(let x=0;x<=nx;x++){
-      const u=x/nx,v=y/ny,px=u*(w+30)-15,py=v*(h+18)-8;
+      const u=x/nx,v=y/ny,px=u*(w+30)-15;
+      // Leave a narrow glimpse of the photograph below the loose, scalloped hem.
+      const hemLift=Math.min(42,h*.045);
+      const scallop=(Math.sin(u*Math.PI*4+.4)*5+Math.sin(u*Math.PI)*7)*v*v*v;
+      const py=v*(h-hemLift)-8+scallop;
       const z=Math.sin(u*Math.PI*9)*9+Math.sin(u*17+v*3)*5;
       points.push({x:px,y:py,z,ox:px,oy:py,oz:z,rx:px,ry:py,rz:z,u,v});
     }
@@ -39,7 +43,7 @@
       const wave=Math.sin(clock*1.05-p.v*4.2+p.u*3.8);
       const ripple=Math.sin(clock*1.7-p.v*7+p.u*10);
       const windX=breeze*freedom*(wave*8+ripple*2);
-      const windY=breeze*freedom*Math.sin(clock*.9+p.u*5-p.v*3)*2;
+      const windY=breeze*freedom*Math.sin(clock*.9+p.u*5-p.v*3)*5;
       const windZ=breeze*freedom*(wave*22+ripple*6);
       p.x+=vx+(p.rx+windX-p.x)*home;p.y+=vy+(p.ry+windY-p.y)*home+(opening?-1.2:0);p.z+=vz+(p.rz+windZ-p.z)*.018;
       if(opening){p.x+=opening*.65;p.y-=1.8;}
@@ -65,7 +69,8 @@
     for(let y=0;y<=ny;y++){for(let x=0;x<=nx;x++){const p=projected[y*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}}
     ctx.stroke();
     // A continuous fine rolled hem along the free lower edge.
-    ctx.beginPath();for(let x=0;x<=nx;x++){const p=projected[ny*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.beginPath();for(let x=0;x<=nx;x++){const p=projected[ny*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}
+    ctx.save();ctx.shadowColor='rgba(78,59,43,.22)';ctx.shadowBlur=3;ctx.shadowOffsetY=2;ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.5;ctx.stroke();ctx.restore();
   }
   function tick(time){raf=0;if(layer.hidden||document.hidden)return;if(!last||time-last>=30){step();render();last=time;}if(!reduced||grab||opening)raf=requestAnimationFrame(tick);}
   function wake(){if(!raf){last=0;raf=requestAnimationFrame(tick);}}
