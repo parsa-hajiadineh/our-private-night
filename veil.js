@@ -15,7 +15,7 @@
   `;document.head.append(css);
   const canvas=document.createElement('canvas');canvas.className='veil-cloth-canvas';canvas.setAttribute('aria-hidden','true');sheet.append(canvas);
   const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return;
-  const nx=48,ny=64,points=[],links=[];let w=0,h=0,raf=0,last=0,clock=0,grab=null,opening=0,opened=false,dragDistance=0;
+  const nx=72,ny=96,points=[],links=[];let w=0,h=0,raf=0,last=0,clock=0,grab=null,opening=0,opened=false,dragDistance=0;
   function setup(){
     w=layer.clientWidth;h=layer.clientHeight;if(!w||!h)return;
     const dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -30,16 +30,22 @@
   }
   function pin(){if(!grab)return;const p=points[grab.index];p.x=grab.x;p.y=grab.y;p.z=grab.z;}
   function step(){
-    clock+=1/60;
+    clock+=1/30;
     for(const p of points){
       const vx=(p.x-p.ox)*.91,vy=(p.y-p.oy)*.91,vz=(p.z-p.oz)*.89;p.ox=p.x;p.oy=p.y;p.oz=p.z;
       const home=opening?0:.009;
-      p.x+=vx+(p.rx-p.x)*home;p.y+=vy+(p.ry-p.y)*home+(opening?-1.2:0);p.z+=vz+(p.rz-p.z)*.012;
-      if(!reduced&&!grab&&!opening)p.z+=Math.sin(clock*1.1+p.u*9+p.v*3)*.045;
+      // Traveling gusts: the pinned top stays quiet; the loose lower cloth billows.
+      const freedom=p.v*p.v, breeze=reduced||opening?0:(grab?.25:1);
+      const wave=Math.sin(clock*1.05-p.v*4.2+p.u*3.8);
+      const ripple=Math.sin(clock*1.7-p.v*7+p.u*10);
+      const windX=breeze*freedom*(wave*8+ripple*2);
+      const windY=breeze*freedom*Math.sin(clock*.9+p.u*5-p.v*3)*2;
+      const windZ=breeze*freedom*(wave*22+ripple*6);
+      p.x+=vx+(p.rx+windX-p.x)*home;p.y+=vy+(p.ry+windY-p.y)*home+(opening?-1.2:0);p.z+=vz+(p.rz+windZ-p.z)*.018;
       if(opening){p.x+=opening*.65;p.y-=1.8;}
     }
     for(let pass=0;pass<5;pass++){
-      for(const l of links){const a=points[l.a],b=points[l.b];let dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;const distance=Math.hypot(dx,dy,dz)||1;const force=(distance-l.length)/distance*.45;a.x+=dx*force;a.y+=dy*force;a.z+=dz*force;b.x-=dx*force;b.y-=dy*force;b.z-=dz*force;}
+      for(const l of links){const a=points[l.a],b=points[l.b];let dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z;const distance=Math.sqrt(dx*dx+dy*dy+dz*dz)||1;const force=(distance-l.length)/distance*.45;a.x+=dx*force;a.y+=dy*force;a.z+=dz*force;b.x-=dx*force;b.y-=dy*force;b.z-=dz*force;}
       if(!opening)for(let x=0;x<=nx;x++){const p=points[x];p.x+=(p.rx-p.x)*.8;p.y+=(p.ry-p.y)*.8;}
       pin();
     }
@@ -52,11 +58,12 @@
       const slope=(q.z-p.z)/(w/nx);const fold=.5+.5*Math.sin(x/nx*29+p.v*2+slope*.8);
       ctx.beginPath();ids.forEach((id,k)=>{const t=projected[id];if(k)ctx.lineTo(t.x,t.y);else ctx.moveTo(t.x,t.y);});ctx.closePath();
       ctx.fillStyle=`rgba(255,253,249,${Math.min(.69,.27+fold*.30+Math.abs(slope)*.09)})`;ctx.fill();
-      // Threads run through shared edges, staying attached while the mesh folds.
-      const a=projected[i],b=projected[i+1],c=projected[i+nx+1],d=projected[i+nx+2];
-      ctx.strokeStyle='rgba(255,255,255,.24)';ctx.lineWidth=.45;ctx.beginPath();
-      for(let t=0;t<1;t+=.5){ctx.moveTo(a.x+(b.x-a.x)*t,a.y+(b.y-a.y)*t);ctx.lineTo(c.x+(d.x-c.x)*t,c.y+(d.y-c.y)*t);ctx.moveTo(a.x+(c.x-a.x)*t,a.y+(c.y-a.y)*t);ctx.lineTo(b.x+(d.x-b.x)*t,b.y+(d.y-b.y)*t);}ctx.stroke();
     }
+    // Batch continuous thread paths rather than thousands of separate strokes.
+    ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=.4;ctx.beginPath();
+    for(let x=0;x<=nx;x++){for(let y=0;y<=ny;y++){const p=projected[y*(nx+1)+x];if(y)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}}
+    for(let y=0;y<=ny;y++){for(let x=0;x<=nx;x++){const p=projected[y*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}}
+    ctx.stroke();
     // A continuous fine rolled hem along the free lower edge.
     ctx.beginPath();for(let x=0;x<=nx;x++){const p=projected[ny*(nx+1)+x];if(x)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);}ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=1.2;ctx.stroke();
   }
