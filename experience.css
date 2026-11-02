@@ -28,3 +28,5 @@ html{scroll-padding-top:72px}
 /* Keep Persian shaping tables intact for the veil's connected lettering. */
 @font-face{font-family:VeilNastaliq;src:url('assets/nastaliq-veil.ttf') format('truetype');font-weight:400;font-display:swap}
 #veil-layer .veil-prompt p{font-family:VeilNastaliq,serif;font-weight:400;font-synthesis:none;letter-spacing:0;line-height:2.6;padding-block:6px}
+.gallery-grid .gallery-download{display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin:2px auto 5px;padding:5px 13px;border:1px solid #d4bea1;border-radius:20px;background:#f5ead8;color:#87654e;text-decoration:none;font-size:10px;line-height:1.8}
+.gallery-download:focus-visible{outline:2px solid #94735c;outline-offset:3px}

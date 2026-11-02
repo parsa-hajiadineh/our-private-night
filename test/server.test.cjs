@@ -29,4 +29,12 @@ test('guestbook PDF and whole album ZIP are admin-only and include private entri
   const index=JSON.parse(bytes.subarray(start,start+size).toString());assert.ok(index.items.length>=2);assert.ok(index.items.some(i=>!i.publicConsent));assert.ok(index.items.some(i=>i.status==='rejected'));
   assert.ok(index.items.every(i=>/^media\/[0-9]+-[a-f0-9-]+\.png$/.test(i.file)));assert.ok(bytes.includes(image));
 });
+test('public downloads retain moderation and consent protections and a correct extension',async()=>{
+  const uploaded=await upload(true);const url=base+'/media/'+uploaded.data.id+'?download=1';
+  assert.equal((await fetch(url)).status,404);
+  await api('/api/admin/moderate',{kind:'media',id:uploaded.data.id,status:'approved'},session);
+  const download=await fetch(url);assert.equal(download.status,200);assert.match(download.headers.get('content-disposition'),/^attachment; filename="Parsa-Saba-.*\.png"$/);assert.equal(download.headers.get('content-type'),'image/png');assert.deepEqual(Buffer.from(await download.arrayBuffer()),image);
+  await api('/api/admin/moderate',{kind:'media',id:uploaded.data.id,status:'pending'},session);assert.equal((await fetch(url)).status,404);
+  const privateUpload=await upload(false);assert.equal((await fetch(base+'/media/'+privateUpload.data.id+'?download=1')).status,404);
+});
 test('logout revokes the current admin session',async()=>{await api('/api/admin/logout',{},session);assert.equal((await api('/api/admin/data',undefined,session)).response.status,401);});

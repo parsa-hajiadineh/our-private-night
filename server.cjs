@@ -172,6 +172,7 @@ const server = http.createServer(async (req, res) => {
     if(route.startsWith('/media/') && ['GET','HEAD'].includes(req.method)) {
       const id=route.slice(7);if(!idPattern.test(id))throw error(404,'یافت نشد.');const row=db.prepare('SELECT * FROM media WHERE id=?').get(id);
       if(!row || ((row.status!=='approved'||!row.public_consent)&&!admin(req)))throw error(404,'یافت نشد.');
+      if(url.searchParams.get('download')==='1')res.setHeader('Content-Disposition',`attachment; filename="Parsa-Saba-${row.id}${path.extname(row.filename)}"`);
       return await serveFile(req,res,path.join(UPLOADS,row.filename),row.mime,true);
     }
     if(route==='/api/qr.svg' && req.method==='GET') {
