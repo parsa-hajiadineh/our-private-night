@@ -4,6 +4,27 @@
   const fa = new Intl.NumberFormat('fa-IR');
   const API_HEADERS = {'Content-Type':'application/json','X-Requested-With':'wedding-invitation'};
   let config = null, selectedFiles = [], sending = false;
+  const rails=new Map();
+  function updateRail(track,label){
+    let rail=rails.get(track);
+    if(!rail){
+      track.tabIndex=0;track.setAttribute('role','region');track.setAttribute('aria-label',label);
+      const controls=document.createElement('div');controls.className='memory-controls';
+      const previous=document.createElement('button'),next=document.createElement('button'),counter=document.createElement('span');
+      previous.type=next.type='button';previous.textContent='→';next.textContent='←';
+      previous.setAttribute('aria-label','قبلی در '+label);next.setAttribute('aria-label','بعدی در '+label);
+      previous.setAttribute('aria-controls',track.id);next.setAttribute('aria-controls',track.id);
+      controls.append(previous,counter,next);track.after(controls);
+      function current(){const edge=track.getBoundingClientRect().right-4;let index=0,distance=Infinity;Array.from(track.children).forEach((card,i)=>{const d=Math.abs(card.getBoundingClientRect().right-edge);if(d<distance){distance=d;index=i;}});return index;}
+      function reflect(){const count=track.children.length,index=current();controls.hidden=count<2;previous.disabled=index===0;next.disabled=index>=count-1;counter.textContent=fa.format(index+1)+' / '+fa.format(count);}
+      function move(direction){const children=track.children,index=Math.max(0,Math.min(children.length-1,current()+direction));children[index]?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'nearest',inline:'start'});}
+      previous.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
+      track.addEventListener('scroll',reflect,{passive:true});
+      track.addEventListener('keydown',e=>{if(e.target!==track)return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();move(e.key==='ArrowLeft'?1:-1);}});
+      new ResizeObserver(reflect).observe(track);rail={reflect};rails.set(track,rail);
+    }
+    rail.reflect();
+  }
   let guestKey;
   try {guestKey=localStorage.getItem('wedding-guest-key');if(!guestKey){guestKey=Array.from(crypto.getRandomValues(new Uint8Array(16)), n=>n.toString(16).padStart(2,'0')).join('').replace(/-/g,'');localStorage.setItem('wedding-guest-key',guestKey);}}catch{guestKey=Array.from(crypto.getRandomValues(new Uint8Array(16)), n=>n.toString(16).padStart(2,'0')).join('').replace(/-/g,'');}
   async function api(url, body) {
@@ -34,9 +55,9 @@
   $('copy-address').addEventListener('click',async()=>{const address=config?.address||'سهیلیه، زکی‌آباد، خیابان ارغوان ۱';try{await navigator.clipboard.writeText(address);toast('نشانی کپی شد.');}catch{toast(address);}});
   $('rsvp-form').addEventListener('change',e=>{if(e.target.name==='attending'){$('guest-count-label').hidden=e.target.value==='no';}});
   $('rsvp-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget,button=form.querySelector('[type=submit]');if(button.disabled)return;button.disabled=true;const b=Object.fromEntries(new FormData(form));b.guestKey=guestKey;try{const result=await api('/api/rsvp',b);status(form,result.message);try{localStorage.setItem('wedding-rsvp-name',b.name);}catch{}button.textContent='به‌روزرسانی پاسخ';}catch(err){status(form,err.message,true);}finally{button.disabled=false;}});
-  async function loadNotes(){try{const data=await api('/api/notes');const wall=$('guest-notes');wall.replaceChildren();for(const note of data.items){const card=document.createElement('blockquote');const message=document.createElement('p');message.textContent=note.message;const author=document.createElement('cite');author.textContent=note.name;card.append(message,author);wall.append(card);}}catch{}}
+  async function loadNotes(){try{const data=await api('/api/notes');const wall=$('guest-notes');wall.replaceChildren();for(const note of data.items){const card=document.createElement('blockquote');const message=document.createElement('p');message.textContent=note.message;const author=document.createElement('cite');author.textContent=note.name;card.append(message,author);wall.append(card);}updateRail(wall,"دفتر یادبود");}catch{}}
   $('note-form').addEventListener('submit',async e=>{e.preventDefault();const form=e.currentTarget,button=form.querySelector('button');button.disabled=true;try{await api('/api/notes',Object.fromEntries(new FormData(form)));status(form,'یادگاری‌تان رسید؛ پس از تأیید، در دفترمان دیده می‌شود.');form.reset();}catch(err){status(form,err.message,true);}finally{button.disabled=false;}});
-  async function loadGallery(){try{const data=await api('/api/gallery');const gallery=$('guest-gallery');gallery.replaceChildren();$('gallery-empty').hidden=data.items.length>0;for(const item of data.items){const figure=document.createElement('figure');const media=document.createElement(item.mime.startsWith('video/')?'video':'img');media.src=item.url;if(media.tagName==='VIDEO'){media.controls=true;media.preload='metadata';media.playsInline=true;}else{media.alt=item.caption||'عکس مهمانی از '+item.name;media.loading='lazy';}const caption=document.createElement('figcaption');caption.textContent=[item.name,item.caption].filter(Boolean).join(' · ');figure.append(media,caption);gallery.append(figure);}}catch{}}
+  async function loadGallery(){try{const data=await api('/api/gallery');const gallery=$('guest-gallery');gallery.replaceChildren();$('gallery-empty').hidden=data.items.length>0;for(const item of data.items){const figure=document.createElement('figure');const media=document.createElement(item.mime.startsWith('video/')?'video':'img');media.src=item.url;if(media.tagName==='VIDEO'){media.controls=true;media.preload='metadata';media.playsInline=true;}else{media.alt=item.caption||'عکس مهمانی از '+item.name;media.loading='lazy';}const caption=document.createElement('figcaption');caption.textContent=[item.name,item.caption].filter(Boolean).join(' · ');figure.append(media,caption);gallery.append(figure);}updateRail(gallery,"آلبوم مهمان‌ها");}catch{}}
   $('media-files').addEventListener('change',e=>{selectedFiles=Array.from(e.target.files||[]);const list=$('selected-files');list.replaceChildren();selectedFiles.forEach(f=>{const li=document.createElement('li');li.textContent=f.name+' · '+fa.format(Math.round(f.size/1024/1024*10)/10)+' مگابایت';list.append(li);});});
   function uploadOne(file,fields,onProgress){return new Promise((resolve,reject)=>{const xhr=new XMLHttpRequest();xhr.open('POST','/api/upload');xhr.setRequestHeader('X-Requested-With','wedding-invitation');xhr.timeout=180000;xhr.upload.onprogress=e=>{if(e.lengthComputable)onProgress(e.loaded/e.total);};xhr.onload=()=>{let data;try{data=JSON.parse(xhr.responseText);}catch{return reject(Error('پاسخ سرور قابل خواندن نیست.'));}if(xhr.status>=200&&xhr.status<300)resolve(data);else reject(Error(data.error||'ارسال انجام نشد.'));};xhr.onerror=()=>reject(Error('ارتباط قطع شد؛ فایل‌های باقی‌مانده را دوباره ارسال کنید.'));xhr.ontimeout=()=>reject(Error('ارسال زمان زیادی برد؛ دوباره تلاش کنید.'));const body=new FormData();body.append('name',fields.name);body.append('caption',fields.caption);body.append('publicConsent',fields.publicConsent?'true':'false');body.append('file',file);xhr.send(body);});}
   $('upload-form').addEventListener('submit',async e=>{
