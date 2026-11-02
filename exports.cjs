@@ -56,7 +56,14 @@ function guestbookPdf(res,notes,root){
   res.writeHead(200,{'Content-Type':'application/pdf','Content-Disposition':'attachment; filename="Parsa-Saba-Guestbook.pdf"','Cache-Control':'private, no-store'});
   doc.on('error',()=>res.destroy());res.on('close',()=>{if(!res.writableFinished)doc.destroy();});doc.pipe(res);
   base(true);
-  doc.circle(width/2,154,42).lineWidth(.7).stroke('#c1a086');doc.font('Times-Italic').fontSize(34).fillColor('#98705a').text('P & S',left,134,{width:content,align:'center',lineBreak:false});
+  const photo=path.join(root,'assets/couple.jpg');
+  if(fs.existsSync(photo)){
+    const portrait=doc.openImage(photo),photoWidth=128,photoHeight=150,photoX=(width-photoWidth)/2,photoY=76;
+    const scale=Math.max(photoWidth/portrait.width,photoHeight/portrait.height);
+    doc.save().roundedRect(photoX,photoY,photoWidth,photoHeight,60).clip();
+    doc.image(portrait,photoX+(photoWidth-portrait.width*scale)/2,photoY+(photoHeight-portrait.height*scale)*.35,{width:portrait.width*scale,height:portrait.height*scale});
+    doc.restore();doc.roundedRect(photoX-4,photoY-4,photoWidth+8,photoHeight+8,64).lineWidth(.7).stroke('#c1a086');
+  }
   line('حرف‌هایی برای همیشه',235,29,'#72503d','Title');
   line('دفتر یادگاری پارسا و صبا',318,14);line('پنجشنبه ۲۸ آبان ۱۴۰۵',352,11,'#94745d');
   line(fa.format(notes.length)+' یادگاری از آدم‌های این شب',405,11);

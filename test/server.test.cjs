@@ -20,7 +20,7 @@ test('guestbook PDF and whole album ZIP are admin-only and include private entri
   for(const route of ['/api/admin/guestbook.pdf','/api/admin/album.zip'])assert.equal((await fetch(base+route)).status,401);
   const pdf=await fetch(base+'/api/admin/guestbook.pdf',{headers:{Cookie:session}});
   assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');assert.match(pdf.headers.get('content-disposition'),/attachment/);assert.match(pdf.headers.get('cache-control'),/no-store/);
-  const pdfBytes=Buffer.from(await pdf.arrayBuffer());assert.equal(pdfBytes.subarray(0,5).toString(),'%PDF-');assert.match(pdfBytes.toString('latin1'),/%%EOF/);assert.ok(pdfBytes.length>10000);
+  const pdfBytes=Buffer.from(await pdf.arrayBuffer());assert.equal(pdfBytes.subarray(0,5).toString(),'%PDF-');assert.match(pdfBytes.toString('latin1'),/%%EOF/);assert.ok(pdfBytes.length>10000);assert.match(pdfBytes.toString('latin1'),/\/Subtype \/Image/);
   const zip=await fetch(base+'/api/admin/album.zip',{headers:{Cookie:session}});
   assert.equal(zip.status,200);assert.equal(zip.headers.get('content-type'),'application/zip');assert.match(zip.headers.get('cache-control'),/no-store/);
   const bytes=Buffer.from(await zip.arrayBuffer());assert.equal(bytes.readUInt32LE(0),0x04034b50);
