@@ -60,7 +60,6 @@ function guestbookPdf(res,notes,root){
   line('حرف‌هایی برای همیشه',235,29,'#72503d','Title');
   line('دفتر یادگاری پارسا و صبا',318,14);line('پنجشنبه ۲۸ آبان ۱۴۰۵',352,11,'#94745d');
   line(fa.format(notes.length)+' یادگاری از آدم‌های این شب',405,11);
-  line('نسخه خصوصی میزبان؛ شامل همه وضعیت‌ها',454,9,'#94745d');
   for(const [index,note]of notes.entries()){
     const lines=wrap(note.message);if(y+92>height-62)next();if(page===1)next();
     let offset=0;
