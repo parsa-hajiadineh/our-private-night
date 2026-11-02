@@ -7,6 +7,7 @@ const crypto = require('node:crypto');
 const { DatabaseSync } = require('node:sqlite');
 const Busboy = require('busboy');
 const QRCode = require('qrcode');
+const {guestbookPdf,albumZip}=require('./exports.cjs');
 const ROOT = __dirname;
 const DATA = path.resolve(process.env.DATA_DIR || path.join(ROOT, '.local'));
 const UPLOADS = path.join(DATA, 'uploads');
@@ -187,6 +188,8 @@ const server = http.createServer(async (req, res) => {
     }
     if(route.startsWith('/api/admin/')) {
       requireAdmin(req);
+      if(req.method==='GET'&&route==='/api/admin/guestbook.pdf')return guestbookPdf(res,db.prepare('SELECT * FROM notes ORDER BY created_at ASC, id ASC').all(),ROOT);
+      if(req.method==='GET'&&route==='/api/admin/album.zip')return await albumZip(res,db.prepare('SELECT * FROM media ORDER BY created_at ASC, id ASC').all(),UPLOADS);
       if(route==='/api/admin/logout'&&req.method==='POST'){const cookie=(req.headers.cookie||'').split(';').map(s=>s.trim()).find(s=>s.startsWith('wedding_admin='));if(cookie)sessions.delete(hash(cookie.slice(14)));return json(res,200,{ok:true},{'Set-Cookie':'wedding_admin=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0'});}
       if(route==='/api/admin/data'&&req.method==='GET')return json(res,200,{config:config(),rsvps:db.prepare('SELECT id,name,attending,guests,note,created_at,updated_at FROM rsvps ORDER BY updated_at DESC').all(),notes:db.prepare('SELECT * FROM notes ORDER BY created_at DESC').all(),media:db.prepare('SELECT * FROM media ORDER BY created_at DESC').all().map(row=>({...publicMedia(row),status:row.status,publicConsent:!!row.public_consent,size:row.size})),usedBytes:db.prepare('SELECT COALESCE(SUM(size),0) AS size FROM media').get().size});
       if(route==='/api/admin/moderate'&&req.method==='POST') {

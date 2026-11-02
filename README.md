@@ -38,3 +38,6 @@ Environment variables: HOST (127.0.0.1), PORT (5173), DATA_DIR, ADMIN_PASSWORD, 
 Original generated watercolor garden, botanical ribbon and veil texture. Local Vazirmatn and Noto Nastaliq fonts include OFL licenses. Decorative garden artwork does not depict the venue.
 
 npm test uses isolated temporary databases and checks privacy, RSVP validation/deadline, moderation, consent, file validation, QR configuration, calendar timing and logout. Tests do not insert entries into your live database.
+
+## Admin downloads
+The admin toolbar offers a designed A5 PDF guestbook and a single ZIP of the whole guest album. Both endpoints require a current admin session and disable caching. Exports include pending, rejected and private-only items; they are host archives, not public galleries. The ZIP streams originals one at a time without recompression and includes album-index.json with names, captions and status. Open the ZIP in the phone's Files app. Persian PDF text uses an embedded static Vazirmatn font, Nastaliq headings and monochrome Noto Emoji; their OFL licenses are included.

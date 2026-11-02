@@ -1,4 +1,4 @@
-﻿const {test,before,after}=require('node:test');
+const {test,before,after}=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');const os=require('node:os');const path=require('node:path');const {spawn}=require('node:child_process');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'wedding-test-'));const port=19000+Math.floor(Math.random()*10000);const base='http://127.0.0.1:'+port;let child,session;
@@ -16,4 +16,17 @@ test('uploaded media is inaccessible before approval, even by guessed URL',async
 test('private-only files cannot be published and disguised HTML is rejected',async()=>{const r=await upload(false);assert.equal((await api('/api/admin/moderate',{kind:'media',id:r.data.id,status:'approved'},session)).response.status,409);assert.equal((await upload(true,Buffer.from('<html>unsafe</html>'),'fake.png')).response.status,415);assert.ok(!fs.readdirSync(path.join(temp,'uploads')).some(x=>x.endsWith('.part')));});
 test('QR is withheld until a public URL exists and then generated server-side',async()=>{assert.equal((await fetch(base+'/api/qr.svg')).status,409);assert.equal((await api('/api/admin/settings',{publicBaseUrl:'javascript:alert(1)'},session)).response.status,400);await api('/api/admin/settings',{publicBaseUrl:'https://wedding.example'},session);const r=await fetch(base+'/api/qr.svg');assert.equal(r.status,200);assert.match(await r.text(),/<svg/);});
 test('calendar contains the evening schedule across local midnight',async()=>{const r=await fetch(base+'/assets/parsa-saba.ics');assert.equal(r.status,200);const s=await r.text();assert.match(s,/DTSTART:20261119T133000Z/);assert.match(s,/DTEND:20261119T203000Z/);assert.ok(s.includes('\r\n'));});
+test('guestbook PDF and whole album ZIP are admin-only and include private entries',async()=>{
+  for(const route of ['/api/admin/guestbook.pdf','/api/admin/album.zip'])assert.equal((await fetch(base+route)).status,401);
+  const pdf=await fetch(base+'/api/admin/guestbook.pdf',{headers:{Cookie:session}});
+  assert.equal(pdf.status,200);assert.equal(pdf.headers.get('content-type'),'application/pdf');assert.match(pdf.headers.get('content-disposition'),/attachment/);assert.match(pdf.headers.get('cache-control'),/no-store/);
+  const pdfBytes=Buffer.from(await pdf.arrayBuffer());assert.equal(pdfBytes.subarray(0,5).toString(),'%PDF-');assert.match(pdfBytes.toString('latin1'),/%%EOF/);assert.ok(pdfBytes.length>10000);
+  const zip=await fetch(base+'/api/admin/album.zip',{headers:{Cookie:session}});
+  assert.equal(zip.status,200);assert.equal(zip.headers.get('content-type'),'application/zip');assert.match(zip.headers.get('cache-control'),/no-store/);
+  const bytes=Buffer.from(await zip.arrayBuffer());assert.equal(bytes.readUInt32LE(0),0x04034b50);
+  const nameLength=bytes.readUInt16LE(26),extraLength=bytes.readUInt16LE(28),size=bytes.readUInt32LE(18),start=30+nameLength+extraLength;
+  assert.equal(bytes.subarray(30,30+nameLength).toString(),'album-index.json');
+  const index=JSON.parse(bytes.subarray(start,start+size).toString());assert.ok(index.items.length>=2);assert.ok(index.items.some(i=>!i.publicConsent));assert.ok(index.items.some(i=>i.status==='rejected'));
+  assert.ok(index.items.every(i=>/^media\/[0-9]+-[a-f0-9-]+\.png$/.test(i.file)));assert.ok(bytes.includes(image));
+});
 test('logout revokes the current admin session',async()=>{await api('/api/admin/logout',{},session);assert.equal((await api('/api/admin/data',undefined,session)).response.status,401);});
